@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>It must be bunnies - X240 Thinkpad touchpad</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">It must be bunnies</a>a blog about, you know, stuff
+        </div>
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>X240 Thinkpad touchpad</h1>
+		<aside>Posted at: May 26, 2015</aside>
+		<article>
+			<p>Out of the box, the suport for x240 touchpad under Ubuntu is poor.
+Here is what I did to fix it, based on <a href="http://mydevelopedworld.wordpress.com/2013/11/30/how-to-configure-new-lenovo-x240-touchpad-on-ubuntu-13-10/">this article</a>.</p>
+
+<!-- more -->
+
+<h4 id="the-problems">The problems</h4>
+
+<p>The touchpad is in only one part (it’s also called a clickpad):</p>
+
+<p><img src="/images/clickpad.png" alt="clickpad image" title="clickpad" /></p>
+
+<p>On ubuntu, by default, there are problems with it:</p>
+
+<ol>
+  <li>When you click, you move the mouse.</li>
+  <li>Right click is configured on the lower right corner: 
+     I would expect it to be on the upper right one.</li>
+  <li>There is no middle click.</li>
+</ol>
+
+<h4 id="the-xorg-synaptic-configuration">The xorg synaptic configuration</h4>
+
+<p>The file we’ll be editing is: 
+<code>/usr/share/X11/xorg.conf.d/50-synaptics.conf</code>.</p>
+
+<p>So you should back it up.</p>
+
+<h4 id="fix-with-no-explanation">Fix with no explanation</h4>
+
+<p>Here is a summary of the fix (if you want explanations, skip this part):</p>
+
+<p>In this section:</p>
+
+<pre><code>Section "InputClass"
+        Identifier "Default clickpad buttons"
+</code></pre>
+
+<p>replace: <code>Option "SoftButtonAreas" "50% 0 82% 0 0 0 0 0"</code></p>
+
+<p>with: <code>Option "SoftButtonAreas" "65% 0 0 10% 35% 60% 0 10%"</code></p>
+
+<p>And in the same section, add: <code>Option "AreaTopEdge" "10%"</code></p>
+
+<p>Then restart Xorg: (e.g. <code>sudo service lightdm restart</code>).<br />
+You’re done.</p>
+
+<p>To sum it up, here is a diff (run <code>patch 50-synaptics.conf $with_this</code>):</p>
+
+<pre><code>34c34
+&lt;         Option "SoftButtonAreas" "50% 0 82% 0 0 0 0 0"
+---
+&gt;       Option "SoftButtonAreas" "65% 0 0 10% 35% 65% 0 10%"
+37c37
+&lt; #       Option "AreaBottomEdge" "82%"
+---
+&gt;         Option "AreaTopEdge" "10%"
+</code></pre>
+
+<h4 id="fixing-the-click-problem">Fixing the click problem</h4>
+
+<p>in the following section:</p>
+
+<pre><code>Section "InputClass"
+        Identifier "Default clickpad buttons"
+</code></pre>
+
+<p>We have to update the SoftButtonAreas field which has height parameters.
+From <code>man snyaptics</code>:</p>
+
+<pre><code>Option "SoftButtonAreas" "RBL RBR RBT RBB MBL MBR MBT MBB"
+
+This option is only available on ClickPad devices.
+Enable soft button click area support on ClickPad devices.
+The first four parameters are the left, right, top, bottom edge of the right button, respectively,
+the second four parameters are  the  left, right, top, bottom edge of the middle button, respectively.
+[...]
+If any edge is set to 0 (not 0%), the button is assumed to extend  to  infinity 
+</code></pre>
+
+<p>Here is the initial value: <code>Option "SoftButtonAreas" "50% 0 82% 0 0 0 0 0"</code></p>
+
+<p>So the right button is starting at half the left of the clickpad and starting at 82% of its top.
+Also, the manual states that:</p>
+
+<pre><code>Setting all values to 0 (not 0%) disables soft button areas.
+test
+</code></pre>
+
+<p>So the middle button is disabled.
+So here is the right click zone (clicking anywhere else is considered as a left click):</p>
+
+<div style="width:520px; height:370px; background-image:url('/images/clickpad.png')">
+<div style="position:relative; left: 50%; top: 82%; width: 42%; height:16.65%; background-color: green; border-bottom-right-radius: 10px; opacity: 0.8;">
+</div>
+</div>
+
+<p>Say we want the right button to start at 65% of the left and stop at 10% of the top.
+If we want the middle button to start at 35% of the left and end at 10% of the top, here is what we should write:</p>
+
+<p><code>Option "SoftButtonAreas" "65% 0 0 10% 35% 65% 0 10%"</code></p>
+
+<p>The resulting zones are (blue is middle click, green is right click):</p>
+
+<div style="width:520px; height:370px; background-image:url('/images/clickpad.png')">
+<div style="position: relative; float: left; left: 38%; top: 6%; width: 27%; height:10%; background-color: blue; opacity: 0.8;">
+</div>
+<div style="position: relative; left: 65%; top: 6%; width: 26%; height:10%; background-color: green; opacity: 0.8;">
+</div>
+</div>
+
+<h4 id="do-not-move-the-mouse-while-clicking">Do not move the mouse while clicking</h4>
+
+<p>Again from the manual, there’s this option:</p>
+
+<pre><code>Option "AreaTopEdge" "integer"
+
+Ignore  movements,  scrolling  and  tapping  which  take  place above this edge.
+</code></pre>
+
+<p>So we’d like enable that below the buttons which are located at 10% of the touchpad.
+So let’s add:</p>
+
+<p><code>Option "AreaTopEdge" "10%"</code></p>
+
+<p>Then, restart Xorg: (e.g. <code>sudo service lightdm restart</code>).<br />
+We’re done.</p>
+
+		</article>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'itmustbebunnies'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/thinkpad/" rel="10">
+			thinkpad
+		</a>
+
+		<a href="/blog/tags/touchpad/" rel="10">
+			touchpad
+		</a>
+
+		<a href="/blog/tags/x240/" rel="10">
+			x240
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2015/05" >
+					May 2015 (1)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
+

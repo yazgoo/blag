@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - Expression Trees</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>Expression Trees</h1>
+		<aside>Posted at: April 4, 2014</aside>
+		<article>
+			<p><a href="http://msdn.microsoft.com/en-us/library/vstudio/bb397951.aspx">Expression Trees</a> have been buzzing in .NET land around since 3.5.  Before now I’d never taken the time to understand them, and to my shame when colleagues mentioned them I would nod with (what I hoped was) an air of one who had a clue.  I now have a little more of a clue</p>
+
+<!-- more -->
+
+<h4 id="the-command-design-pattern">The Command Design Pattern</h4>
+
+<p>One of my favourite design patterns is the <a href="http://en.wikipedia.org/wiki/Command_pattern">Command pattern</a>.  If you aren’t familiar with it, it is the representation of a <strong>command</strong> (request, method, function) by an <strong>object</strong> within an object-orientated paradigm.  Wikipedia has this (in my opinion rather strong) definition:</p>
+
+<blockquote>
+  <p>In object-oriented programming, the command pattern is a behavioral design pattern in which an object is used to represent and encapsulate all the information needed to call a method at a later time. This information includes the method name, the object that owns the method and values for the method parameters.</p>
+</blockquote>
+
+<p>It’s a very simple concept - but immensely powerful.  I’m not going to labour over why it’s great but to highlight a few uses:</p>
+
+<ul>
+  <li>Auditing/Logging: If an action is represented by a command object, a detailed audit of that action can be derived from the command object.</li>
+  <li>Scheduling: A command object representing an action to be executed in the future can be persisted.  The required action can simply be read of the stored command object when needed.</li>
+  <li>Undoing: If for every action a corresponding “undo action” can be stored as an object, it is easy to implement “Ctrl-Z”.</li>
+</ul>
+
+<h4 id="imagine">Imagine…</h4>
+
+<p>..if every method call in .NET could be represented by an object.  What would that look like?  Let us take a simple predicate:</p>
+
+<pre><code>i =&gt; i &lt; 0 || i &gt; 5;
+</code></pre>
+
+<p>If I wanted to decompose this in to object I might start with an “alphabet” looking something like this:</p>
+
+<p><img src="/Images/symbols.png" alt="symbols" /></p>
+
+<p>I’ve got one “letter” for each symbol in my predicate.  Hang on - why are they different colours?  I’ve jumped the gun a bit here and represented the fact that there are actually three “flavours” of symbols in this predicate:</p>
+
+<ul>
+  <li>Constants (<code>0</code> and <code>5</code>);</li>
+  <li>Variables (<code>i</code>);</li>
+  <li>Binary Operators (<code>&lt;</code>, <code>&gt;</code> and <code>||</code>).</li>
+</ul>
+
+<p>Let us start with the term <code>i &lt; 0</code>.  I can represent that using my alphabet like so:</p>
+
+<p><img src="/Images/ilessthan0.png" alt="ilessThan0" /></p>
+
+<p>The binary operator operates acts on the parameters <code>0</code> and <code>i</code> (order is important) and out of the top pops a boolean (<code>true</code> or <code>false</code>).</p>
+
+<p>Similarly we can represent <code>i &gt; 5</code> by</p>
+
+<p><img src="/Images/igreaterthan5.png" alt="igreaterThan5" /></p>
+
+<p>Finally my entire predicate has the technicolour representation:</p>
+
+<p><img src="/Images/predicate.png" alt="predicate" /></p>
+
+<p>Hey!  This looks remarkably like a <em>tree</em>. </p>
+
+<h5 id="but-these-things-already-exist">But these things already exist!</h5>
+
+<p>As you probably knew/guessed - all that imagine stuff above is precisely what expression trees are all about. In C# building the above predicate would look like this:</p>
+
+<pre><code>var zeroExpr = Expression.Constant(0);
+var fiveExpr = Expression.Constant(5);
+var iExpr = Expression.Variable(typeof (int), "i");
+
+var ilessThanZeroExpr = Expression.LessThan(iExpr, zeroExpr);
+var igreaterThanFiveExpr = Expression.GreaterThan(iExpr, fiveExpr);
+
+var preciate = Expression.OrElse(ilessThanZeroExpr, igreaterThanFiveExpr);
+
+Console.WriteLine(preciate.ToString());
+Console.ReadLine();
+</code></pre>
+
+<p>The output to the console is the following:</p>
+
+<p><img src="/Images/csharppredicate.png" alt="csharppredicate" /></p>
+
+<p>As a final remark, we can now convert this to a lambda expression and invoke it on the fly.  Note that we have to change the type of <code>iExpr</code> from a <em>variable</em> to a <em>parameter</em>.  This make sense as we are now passing it as a parameter to our lambda expression:</p>
+
+<pre><code>class Program
+{
+	static void Main(string[] args)
+	{
+		var zeroExpr = Expression.Constant(0);
+		var fiveExpr = Expression.Constant(5);
+		var iExpr = Expression.Parameter(typeof (int), "i");
+
+		var ilessThanZeroExpr = Expression.LessThan(iExpr, zeroExpr);
+		var igreaterThanFiveExpr = Expression.GreaterThan(iExpr, fiveExpr);
+
+		var predicate = Expression.OrElse(ilessThanZeroExpr, igreaterThanFiveExpr);
+
+		var lambdaExpression = Expression.Lambda&lt;Func&lt;int, bool&gt;&gt;(predicate, iExpr);
+		var func = lambdaExpression.Compile();
+
+		Console.WriteLine(func(4));
+		Console.WriteLine(func(-1));
+
+		Console.ReadLine();
+	}
+}
+</code></pre>
+
+		</article>
+		    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'algebraiccode2'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+          $(function() {
+      $('pre').addClass('prettyprint');
+  });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/mef/" rel="3">
+			MEF
+		</a>
+
+		<a href="/blog/tags/category-theory/" rel="5">
+			category theory
+		</a>
+
+		<a href="/blog/tags/design/" rel="8">
+			design
+		</a>
+
+		<a href="/blog/tags/elastic-search/" rel="3">
+			elastic search
+		</a>
+
+		<a href="/blog/tags/expression-trees/" rel="5">
+			expression trees
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2014/04" >
+					April 2014 (2)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2014/03" >
+					March 2014 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/11" >
+					November 2013 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/10" >
+					October 2013 (4)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

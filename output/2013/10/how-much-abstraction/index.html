@@ -1,0 +1,256 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - How much abstraction?</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>How much abstraction?</h1>
+		<aside>Posted at: October 22, 2013</aside>
+		<article>
+			<p>This is just about the simplest non-trivial class I can think of:</p>
+
+<pre><code>public class Class
+{
+	private readonly IBookingService _bookingService;
+	
+	public MyClass(IBookingService bookingService)
+	{
+		_bookingService = bookingService;
+	}
+
+	public CancelBooking(string bookingReference)
+	{
+		_bookingService.CancelBookingWithReference(bookingReference);
+	}
+}
+</code></pre>
+
+<!-- more -->
+
+<p>It doesn’t do much, but I’ve leveraged all my OO knowledge to:</p>
+
+<ul>
+  <li>Use constructor injection to give me control over my dependencies;</li>
+  <li>Make sure I have abstracted away any concrete dependencies use an interface.</li>
+</ul>
+
+<p>Nice.</p>
+
+<p>Or may be not.  In the past it has been almost an obsession of mine to abstract away as much as possible. My intention-revealing interfaces are all that stand between the consumers of my classes and the logic within.  </p>
+
+<h3 id="abstract-function-know-thy-implementation">Abstract Function, Know Thy Implementation</h3>
+
+<p>Maybe not such a good idea.  </p>
+
+<ul>
+  <li>What if I have to call <code>CancelBooking</code> on a bunch of bookings.  Can I just loop through them?  </li>
+  <li>How long does it take to cancel a booking?  What strain does it put on my database/network/file system?  </li>
+  <li>Is this the kind of thing that could/should be put off until the stress on my system is low - or should I have a dedicated server for running this task?  </li>
+  <li>Will the call to my function timeout - or should I wait indefinitely?  </li>
+  <li>Is it idempotent - if I cancel a booking that has already been cancelled is something really bad going to happen?  </li>
+</ul>
+
+<p>None of these questions are answered by my beautifully constructed abstraction.  </p>
+
+<p>How should I document this in my code?  What should I document?</p>
+
+<p>The obvious answer is to document this kind of stuff in formal documentation attached to the code.  This is unsatisfactory for obvious reasons - as a developer using these classes I want as much information at my fingertips as possible.  I have the code at my fingertips - the documentation is likely a click and a scroll away and I will ignore it.  That said, given the potential complexity of the non-functional behaviour of my function it would be naive to think we can document in the code alone and some external documentation is necessary.  </p>
+
+<p>The problem of documentation is (I think) an interesting, difficult and as the above discussion shows, a necessary one and I am always interested to hear how people approach it.  By looking at how WCF has been implemented we may suggest an approach via attributes:</p>
+
+<h3 id="the-wcf-model---attributes">The WCF model - Attributes</h3>
+
+<p>The extensibility model of WCF suggests that <em>attributes</em> can serve as behavioural documentation.  When implementing a service, the interface (service contract) and implementation are kept separate - the former forming part of the public API, the latter known only to the owner of the service.  In addition to the signature of the interface, both the contract and the implementation can be decorated with attributes that determine and document “non-functional” behaviour:</p>
+
+<pre><code>[ServiceContract(
+		Namespace = "http://algebraiccode.com/ServiceNamespace", 
+		Name = "MyServiceContract", 
+		SessionMode = SessionMode.None)]
+public interface IMyService
+{
+	[OperationContract(Name = "OperationName")]
+	void MyOperation();
+}
+
+[ServiceBehavior(
+	InstanceContextMode = InstanceContextMode.PerCall, 
+	ConcurrencyMode = ConcurrencyMode.Single)]
+public class MyService: IMyService
+{
+	[OperationBehavior(TransactionScopeRequired = true)]
+	public void MyOperation()
+	{
+		
+	}
+}
+</code></pre>
+
+<p>Things like </p>
+
+<ul>
+  <li>Do we require the presence of a session?</li>
+  <li>What is the threading model of the implementation? Will concurrent calls to the service block?</li>
+  <li>Do we require a transaction for this method?</li>
+</ul>
+
+<p>are all covered in the attributes of the service.  The extensibility model of WCF means that virtually all behavioural aspects of the service can be represented in this way, via implementation of the appropriate interface (<code>IServiceBehavior</code>, <code>IOperationBehavior</code>).</p>
+
+<p>Naturally, in order to use this information the consumer of the service currently needs access to these attributes, which are baked in to the implementation that you may not want to expose.  Certainly when publishing internally within an organisation you may feel confident publishing the attributes alongside the contracts, although I can’t quite see how this would work with publicly available services.</p>
+
+		</article>
+		    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'algebraiccode2'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+          $(function() {
+      $('pre').addClass('prettyprint');
+  });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/mef/" rel="3">
+			MEF
+		</a>
+
+		<a href="/blog/tags/category-theory/" rel="5">
+			category theory
+		</a>
+
+		<a href="/blog/tags/design/" rel="8">
+			design
+		</a>
+
+		<a href="/blog/tags/elastic-search/" rel="3">
+			elastic search
+		</a>
+
+		<a href="/blog/tags/expression-trees/" rel="5">
+			expression trees
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2014/04" >
+					April 2014 (2)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2014/03" >
+					March 2014 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/11" >
+					November 2013 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/10" >
+					October 2013 (4)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

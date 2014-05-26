@@ -1,0 +1,15 @@
+<% render 'default' do %>
+  <div>
+      <h1><%= @item[:title]%></h1>
+  </div>
+  <%= yield %>
+    <% articles_with_tag(@item[:tag]).each do |post| %>
+      <div class='row post'>
+        <h1><%= link_to post[:title], post.path %></h1>
+        <aside>Posted at: <%= get_pretty_date(post) %></aside>
+        <article>
+          <%= get_post_start(post) %>
+        </article>
+      </div>
+    <% end %>
+<% end %>

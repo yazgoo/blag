@@ -1,0 +1,14 @@
+<% render 'default' do %>
+  <div>
+      <h1>Posts in <%=Date::MONTHNAMES[@item[:month].to_i] %> <%= @item[:year]%></h1>
+  </div>
+      <% articles_with_year_and_month(@item[:year], @item[:month]).each do |post| %>
+      <div class='row post'>
+        <h1><%= link_to post[:title], post.path %></h1>
+        <aside>Posted at: <%= get_pretty_date(post) %></aside>
+        <article>
+          <%= get_post_start(post) %>
+        </article>
+      </div>
+    <% end %>
+<% end %>

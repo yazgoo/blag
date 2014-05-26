@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>It must be bunnies - <%= @item[:title] %></title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">It must be bunnies</a>a blog about, you know, stuff
+        </div>
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            <%= yield %>
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <%= render 'tags' %>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <%= render 'timeline' %>
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<div>
+<h3>Tags</h3>
+<div id="cloud">
+<% for item in all_tags() %>
+		<a href="/blog/tags/<%= item.to_url %>/" rel="<%= tag_weight(item) %>">
+			<%= item %>
+		</a>
+<% end %>
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>

@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - </title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+          .navbar-harvest .navbar-inner {
+  	background: #f36c00;
+	background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f68a28), color-stop(100%, #f36c00));
+	background: -webkit-linear-gradient(top, #f68a28,#f36c00);
+	background: -moz-linear-gradient(top, #f68a28,#f36c00);
+	background: -o-linear-gradient(top, #f68a28,#f36c00);
+	background: -ms-linear-gradient(top, #f68a28,#f36c00);
+	background: linear-gradient(top, #f68a28,#f36c00);
+}	
+.navbar-harvest .navbar-inner .nav {
+	float: right;
+}	
+.navbar-harvest .brand {
+	color: #fff;
+	text-shadow: none;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.navbar-harvest .navbar-inner .nav li a {
+	color: #fff;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	text-shadow: none;
+	background: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	-webkit-transition: background 0.1s linear,opacity 0.1s linear;
+	-moz-transition: background 0.1s linear,opacity 0.1s linear;
+	-ms-transition: background 0.1s linear,opacity 0.1s linear;
+	-o-transition: background 0.1s linear,opacity 0.1s linear;
+	transition: background 0.1s linear,opacity 0.1s linear;
+	-webkit-font-smoothing: antialiased;			
+	opacity: .9;
+	font-weight: 600;
+}
+.navbar-harvest .navbar-inner .nav li a:hover {
+	background: #f67d0f;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	color: #fff;
+	opacity: 1;
+}
+      </section>
+    </div>
+  </body>
+</html>

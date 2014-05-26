@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - MEF comes of age</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>MEF comes of age</h1>
+		<aside>Posted at: November 3, 2013</aside>
+		<article>
+			<p>It’s been a while since I used MEF, and it was only after posting an answer to <a href="http://stackoverflow.com/a/19757023/2382536">a question on StackOverflow</a> that I realised how long.  Let me start this post by describing exactly what MEF is (or what it was when I knew it).</p>
+
+<!-- more -->
+
+<h2 id="what-problem-does-mef-try-to-solve">What problem does MEF try to solve?</h2>
+
+<p>MEF (or the Managed Extensibility Framework to give it its full title) tackles the problem of <em>runtime extensibility</em>.  Issues such as dynamically loading (and unloading) assemblies not compiled with an application, and the construction of instances of classes contained within those assemblies fall under the remit of MEF.  It’s worth saying that there is nothing that is done using MEF that couldn’t be done using plain old reflection.  It’s just a lot easier using MEF.</p>
+
+<p>Consider the following simple “plugin pattern”:</p>
+
+<p><img src="/Images/pluginhost.png" alt="PluginPattern" /></p>
+
+<p>The boxes represent .NET assemblies, the solid arrow represent references.  The dashed line represents the fact that the host is going to load the plugin assembly at runtime.  Pre .NET 4.0 your set up would look something like this:</p>
+
+<p>First start with the interfaces that represent the common ground between the host and the plugin assemblies:</p>
+
+<pre><code>namespace Common
+{
+    public interface IDependency { }
+
+    public interface IPlugin
+    {
+        IEnumerable&lt;IDependency&gt; Dependencies { get; set; }
+    }
+}
+</code></pre>
+
+<p>The host is going to load up the Plugin assembly from a directory:</p>
+
+<pre><code>namespace Host
+{
+    internal class Program
+    {
+        private static void Main(string[] args)
+        {
+
+            var pluginDirectory = ConfigurationManager.AppSettings["PluginDirectory"];
+            var assemblyCatalog = new DirectoryCatalog(pluginDirectory);
+            var container = new CompositionContainer(assemblyCatalog);
+
+            var host = new ImportHost();
+            container.ComposeParts(host);
+            IPlugin loadedPlugin = host.Plugin;
+        }
+
+        private sealed class ImportHost
+        {
+            [Import(typeof (IPlugin))]
+            public IPlugin Plugin { get; set; }
+        }
+    }
+}
+</code></pre>
+
+<p>Finally, the Plugin assembly:</p>
+
+<pre><code>namespace Plugin
+{
+    [Export(typeof(IPlugin))]
+    public class Root: IPlugin
+    {
+        [ImportMany(typeof(IDependency))]
+        public IEnumerable&lt;IDependency&gt; Dependencies { get;  set; }
+    }
+
+    [Export(typeof(IDependency))]
+    public class DependencyOne: IDependency
+    {
+    }
+
+    [Export(typeof(IDependency))]
+    public class DependencyTwo: IDependency
+    {
+    }
+}
+</code></pre>
+
+<p>The attributes that MEF imposes on you has always bothered me.  I love way that MEF takes care of all the boiler plate reflection code giving you runtime extensibility (although I think it’s a shame there isn’t support for the loading of assemblies in to separate AppDomains), but the fact that your plugins had to be specifically developed for MEF seemed to be a major limitation.  </p>
+
+<h3 id="until-registrationbuilder">Until <code>RegistrationBuilder</code></h3>
+
+<p>With .NET 4.5 we can now replace the Plugin assembly code with (no attributes!):</p>
+
+<pre><code>namespace Plugin
+{
+    public class Root: IPlugin
+    {
+        public IEnumerable&lt;IDependency&gt; Dependencies { get;  set; }
+    }
+
+    public class DependencyOne: IDependency
+    {
+    }
+
+    public class DependencyTwo: IDependency
+    {
+    }
+}
+</code></pre>
+
+<p>We have now removed any reference to MEF - to labour the point I can even change the target .NET framework to 2.0 - days before MEF was ever on the scene.  The price we pay is extra configuration in the Hosts assembly:</p>
+
+<pre><code>internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var registrationBuilder = new RegistrationBuilder();
+
+        registrationBuilder
+            .ForTypesDerivedFrom&lt;IDependency&gt;()
+            .Export&lt;IDependency&gt;();
+
+        registrationBuilder
+            .ForTypesDerivedFrom&lt;IPlugin&gt;()
+            .Export&lt;IPlugin&gt;()
+            .ImportProperties&lt;IDependency&gt;(p =&gt; true, (p,b) =&gt; b.AsMany());
+
+        var pluginDirectory = ConfigurationManager.AppSettings["PluginDirectory"];
+        var assemblyCatalog = new DirectoryCatalog(pluginDirectory, registrationBuilder);
+        var container = new CompositionContainer(assemblyCatalog);
+
+        var host = new ImportHost();
+        container.ComposeParts(host);
+        IPlugin loadedPlugin = host.Plugin;
+    }
+
+    private sealed class ImportHost
+    {
+        [Import(typeof(IPlugin))]
+        public IPlugin Plugin { get; set; }
+    }
+}
+</code></pre>
+
+<p>In some ways, MEF is now behaving far more like an IoC container the extra configuration being responsible for setting up the conventions of the IoC container.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In my opinion the addition of convention based configuration for MEF represents a big step.  It makes me far more willing to use MEF in my applications, knowing that I only add dependencies on the code responsible for hosting and composing the plugins.</p>
+
+		</article>
+		    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'algebraiccode2'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+          $(function() {
+      $('pre').addClass('prettyprint');
+  });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/mef/" rel="3">
+			MEF
+		</a>
+
+		<a href="/blog/tags/category-theory/" rel="5">
+			category theory
+		</a>
+
+		<a href="/blog/tags/design/" rel="8">
+			design
+		</a>
+
+		<a href="/blog/tags/elastic-search/" rel="3">
+			elastic search
+		</a>
+
+		<a href="/blog/tags/expression-trees/" rel="5">
+			expression trees
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2014/04" >
+					April 2014 (2)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2014/03" >
+					March 2014 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/11" >
+					November 2013 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/10" >
+					October 2013 (4)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

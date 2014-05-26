@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - Simplifying Adhoc Data Access</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>Simplifying Adhoc Data Access</h1>
+		<aside>Posted at: October 14, 2013</aside>
+		<article>
+			<p>There are many <a href="http://samsaffron.com/archive/2013/05/03/eliminating-my-trivial-inconveniences&quot;">trivial inconveniences</a> in the life of a developer, and for me writing database access code is one of them. Let us start with a typical example of this nature.</p>
+
+<!-- more -->
+
+<p><strong>Get a list of the top 100 most recent bookings</strong></p>
+
+<p>Three pieces of information are important here: Get a <strong>list</strong> of the top <strong>100</strong> most <strong>recent</strong> bookings. Three criteria - 18 lines of code:&lt;</p>
+
+<pre><code>var bookings = new List&lt;Booking&gt;();
+var connectionString = "";
+var bookings = new List&lt;Booking&gt;();
+var connectionString = "";
+using (var connection = new SqlConnection(connectionString))
+{
+	using (var command = new SqlCommand("select top 100 * from Booking_tbl order by  BookedDate desc", connection))
+	{
+		connection.Open();
+		var sqlDataReader = command.ExecuteReader();
+		while (sqlDataReader.Read())
+		{
+			bookings.Add(new Booking
+			{
+				BookingId = sqlDataReader["BookingId"] is int ? (int) sqlDataReader["BookingId"] : 0,
+				BookingRef = sqlDataReader["BookingRef"] as string
+			});
+		}
+	}
+}
+</code></pre>
+
+<p>Horrific.</p>
+
+<p><a href="http://automapper.codeplex.com/">Automapper</a> to the rescue:</p>
+
+<pre><code>Mapper.CreateMap&lt;IDataRecord,Booking&gt;();
+var bookings = new List&lt;Booking&gt;();
+var connectionString = "";
+using (var connection = new SqlConnection(connectionString))
+{
+	using (var command = new SqlCommand("select top 100 * from Booking_tbl", connection))
+	{
+		connection.Open();
+		var sqlDataReader = command.ExecuteReader();
+		bookings.AddRange(Mapper.DynamicMap&lt;IDataReader,IEnumerable&lt;Booking&gt;&gt;(sqlDataReader));
+	}
+}
+</code></pre>
+
+<p>Better - but still fails to convey what I am trying to achieve as succinctly as I would like.</p>
+
+<p>The other day I stumbled upon <a href="&quot;http://dynasql.codeplex.com/documentation&quot;">.NET Dynamic SQL Generator</a> as a way of dynamically creating dynamic database queries in .NET. It abstracts away the underlying data provider so will generate the appropriate dialect of SQL appropriate for you - letting me concentrate on my business logic rather than my (lack of) SQL expertise. I like this:</p>
+
+<pre><code>var connectionString = "";
+Mapper.CreateMap&lt;IDataRecord, Booking&gt;();
+var bookings = new List&lt;Booking&gt;();
+var dbDatabase = DBDatabase.Create(connectionString, "System.Data.SqlClient");
+var query = DBQuery.Select()
+					.TopN(100)
+					.Fields("BookingId", "BookingRef").From("Booking_tbl")
+					.OrderBy("BookedDate", Order.Descending);
+dbDatabase.ExecuteRead(query, r =&gt; bookings.AddRange(Mapper.DynamicMap&lt;IDataReader, IEnumerable&lt;Booking&gt;&gt;(r)));
+</code></pre>
+
+		</article>
+		    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'algebraiccode2'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+          $(function() {
+      $('pre').addClass('prettyprint');
+  });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/mef/" rel="0">
+			MEF
+		</a>
+
+		<a href="/blog/tags/category-theory/" rel="0">
+			category theory
+		</a>
+
+		<a href="/blog/tags/design/" rel="0">
+			design
+		</a>
+
+		<a href="/blog/tags/elastic-search/" rel="0">
+			elastic search
+		</a>
+
+		<a href="/blog/tags/expression-trees/" rel="5">
+			expression trees
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2014/04" >
+					April 2014 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/10" >
+					October 2013 (1)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

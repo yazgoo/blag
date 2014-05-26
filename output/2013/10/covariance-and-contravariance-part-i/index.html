@@ -1,0 +1,235 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - Covariance and Contravariance (Part I)</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>Covariance and Contravariance (Part I)</h1>
+		<aside>Posted at: October 14, 2013</aside>
+		<article>
+			<p>Being a late starter to programming I have never known the hardship of life in C# without generics - to the extent where I can only imagine the horror of coding without them.  However, for a long time the <code>in</code> and <code>out</code> modifiers that appear on the type parameters were a bit of a mystery:</p>
+
+<pre><code>public interface IEnumerable&lt;out T&gt; : IEnumerable
+{
+	IEnumerator&lt;T&gt; GetEnumerator();
+}	
+</code></pre>
+
+<!-- more -->
+
+<p>I knew they were something to do with a concept known as <em>Covariance</em>, but the <a href="&quot;http://msdn.microsoft.com/en-us/library/dd799517.aspx&quot;">Microsoft documentation</a> seemed singularly unhelpful on the subject:</p>
+
+<blockquote>
+  <p>Covariant and contravariant generic type parameters provide greater flexibility in assigning and using generic types. For example, covariant type parameters enable you to make assignments that look much like ordinary polymorphism.</p>
+</blockquote>
+
+<p>As the first search result for “generics covariance” on Google this does nothing to aid my understanding on exactly what covariance is. I get examples of interfaces that are covariant and contravariant - but no deeper understanding in to what these concepts are or why they are useful.</p>
+
+<p>This short blog series is designed to explore the origins of these terms, their application in the context of generics and how this knowledge can improve the code that I write.</p>
+
+<h2 id="relationship-preserving-maps">Relationship preserving maps</h2>
+
+<p>The notion of covariance comes from a branch of mathematics known as Category Theory, which deals with abstract relationships between mathematical structures. In particular, covariance is related to how those relationships behave under mappings between mathematical structures. This all sounds a bit abstract - so lets give some simple examples:</p>
+
+<h3 id="cubic">Cubic</h3>
+
+<p>Consider the cubic function y=x<sup>3</sup> whose graph is shown below:</p>
+
+<p><img src="/Images/cubic.png" alt="Cubic" /></p>
+
+<p>Let <strong>R</strong> denote the set of all numbers on the number line.</p>
+
+<p>This function has the property that for numbers x<sub>1</sub> and x<sub>2</sub> in R such that <em>x<sub>1</sub> &lt; x<sub>2</sub></em>, we have <em>y(x<sub>1</sub>) &lt;  y(x<sub>2</sub>)</em>.  </p>
+
+<h3 id="bags-of-balls">Bags of Balls</h3>
+
+<p>I have a finite number of bags containing one or more tennis balls.  I can put one bag within another bag to create bags of balls within bags:</p>
+
+<p><img src="/Images/BagsOfBalls.png" alt="Bags of Balls" /></p>
+
+<p>Let <strong>B</strong> denote the set of all such “bag combinations”, and for any two bag combinations B1 and B2 I write <em>B1 ⊂ B2</em> if the combination B1 is contained with B2.  Using the example above, I would write:</p>
+
+<p><img src="/Images/BagContains.png" alt="Bag Contains Bag" /></p>
+
+<p>For each bag combination, we can define a function Count: <strong>B</strong> → <strong>N</strong> (where <strong>N</strong> denote the set of positive integers), by taking each bag combination and counting all the tennis balls included within it:</p>
+
+<p><img src="/Images/BagCount.png" alt="Bag Count" /></p>
+
+<p>It is easy to see that this function has the property that if <em>B1 ⊂ B2</em> then <em>Count(B1) &lt; Count(B2)</em>.</p>
+
+<h3 id="a-bit-of-theory">A bit of theory</h3>
+
+<p>When we endow a set with a relationship between it’s members, the resulting structure is called a category. We’ve seen a couple of examples here:</p>
+
+<p>The set <strong>R</strong> of numbers on the number line, together with the relationship “less than”;
+The set <strong>N</strong> of positive integers, together with the relationship “less than”;
+The set <strong>B</strong> of “bag combinations”, together with the relationship we defined by ⊂.</p>
+
+<p>We have looked at some functions between these categories that preserve the relationship:</p>
+
+<ul>
+  <li>y: (<strong>R</strong>, &lt;) -&gt; (<strong>R</strong>, &lt;);</li>
+  <li>Count: (<strong>B</strong>, ⊂ ) -&gt;  (<strong>N</strong>, &lt;).</li>
+</ul>
+
+<p>You may notice another such map that we have not so far mentioned - if we take the natural inclusion of the set of integers N within the number line R this extends to a “relationship preserving” map of categories  (<strong>N</strong>, &lt;) -&gt;  (<strong>R</strong>, &lt;).</p>
+
+<p>A map of categories that respects the relationships in the way that these maps do is known as a functor. Next time we will look at how there are actually two types of functors, and look at the connection between generics and functors.</p>
+
+		</article>
+		    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'algebraiccode2'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+          $(function() {
+      $('pre').addClass('prettyprint');
+  });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/mef/" rel="3">
+			MEF
+		</a>
+
+		<a href="/blog/tags/category-theory/" rel="5">
+			category theory
+		</a>
+
+		<a href="/blog/tags/design/" rel="8">
+			design
+		</a>
+
+		<a href="/blog/tags/elastic-search/" rel="3">
+			elastic search
+		</a>
+
+		<a href="/blog/tags/expression-trees/" rel="5">
+			expression trees
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2014/04" >
+					April 2014 (2)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2014/03" >
+					March 2014 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/11" >
+					November 2013 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/10" >
+					October 2013 (4)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

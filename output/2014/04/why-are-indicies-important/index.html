@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>My blog - Why are indicies important?</title>
+    <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+  </head>
+  <body> 
+    <nav class="navbar navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Algebraic Code</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Link</a></li>
+            <li><a href="#">Link</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+      <section class='container'>
+        <div class="row">
+        <div class="col-md-8">
+            
+		<h1>Why are indicies important?</h1>
+		<aside>Posted at: March 6, 2014</aside>
+		<article>
+			<p>Much before now I haven’t had to think too hard about databases.  Data goes in - data comes out.  The trouble is that I never really thought about what goes on under the hood - partly due to laziness and partly because the abstraction that the database API presents to me has been sufficient for my needs.</p>
+
+<!-- more -->
+
+<p>OK, so my admission of ignorance is not entirely true - I do have some working knowledge of indexes within a SQL server context.  My rudimentary knowledge boils down to the fact that in SQL server data is stored in one of two data structures - a <em>heap</em>, or a <em>B-tree</em> (the B is for balanced). </p>
+
+<h3 id="basic-database-structures">Basic Database Structures</h3>
+
+<p>Suppose we want to create a database table to store basic contract information.  When a person becomes known to our system we will give them a unique ID to uniquely identify them, even if their contact details change.  Our unique ID will be generated using a monotonically increasing sequence of integers, starting at 1.  To simplify our diagrams we will use this integer to represent the contact details:</p>
+
+<p><img src="/Images/Data.png" alt="Data" /></p>
+
+<p>A common query on our database will be of the form: <strong>Get me the contact details corresponding to the unique identifier 3</strong>.</p>
+
+<h4 id="heap">Heap</h4>
+
+<p>One way we may choose to save our data is represented by the following diagram:</p>
+
+<p><img src="/Images/Heap.png" alt="B-Tree" /> </p>
+
+<p>Each stored contact detail has a reference to the next one, and to search for a contact with a specified unique identifier just involves traversing the linked list until we find the one we want.  </p>
+
+<ul>
+  <li>This is potentially expensive to search - in the above example I would have to go through <strong>all</strong> the stored contact details to find those corresponding to the unique ID 9.  </li>
+  <li>On the plus side - it’s extremely easy to delete old entries and insert new ones.  Deleting an entry involves changing the reference that points to it, and adding an entry is simply adding a reference on the end:</li>
+</ul>
+
+<p><img src="/Images/DeleteAndInsertHeap.png" alt="B-Tree" /></p>
+
+<h4 id="b-tree">B-Tree</h4>
+
+<p>Given we know the common way we will be querying our data, we can rearrange the way the data is stored to optimize the type of queries we will be executing:</p>
+
+<p><img src="/Images/B-Tree.png" alt="B-Tree" title="Optional title" /></p>
+
+<p>In this set-up all the data is stored in the leaves of the tree, whilst the nodes above them carry information further information about where to find the information based on the unique ID.  For example, if I was searching for the details with ID 8: </p>
+
+<ul>
+  <li>The first node would redirect me to the node on the right hand side (because 8 is between 6 and 9);</li>
+  <li>This node has an entry for 8, which I would follow to find the place where the contact details are stored.</li>
+</ul>
+
+<p>It should be obvious that the “worst” case search time is going to grow logarithmically with the number of objects we store, rather than the linear behaviour we saw on the heap.</p>
+
+<p>It’s not win-win all the way though - the extra nodes will consume additional memory compared to the heap, and the desire to keep the tree evenly distributed will add to the price of inserts and deletes.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>The take-away concept here is not the details of the heap and B-tree data structures - it is that way that data is stored is important!  The way that data is stored should be tailored to how you want to extract it. A choice of the data structures mentioned above represents a trade-off between query performance, insert and delete performance and memory usage.  Which one to use depends upon both your performance expectations and hardware constraints.</p>
+
+<p>As far as I know, the cost of choosing the “wrong” data structure in SQL Server is performance - database servers can grind to a halt when little thought is given to the underlying data structures and the impact of choosing a better index can be remarkable.  Having said that, for relational queries (thereby excluding any queries which specify order) I am not aware that choosing the wrong storage mechanism can actually affect the results set.</p>
+
+<p>This is where Elastic Search is markedly different - and opened my eyes to the importance of indexing data correctly.</p>
+
+		</article>
+		    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'algebraiccode2'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+
+          $(function() {
+      $('pre').addClass('prettyprint');
+  });
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+              <div>
+<h3>Tags</h3>
+<div id="cloud">
+
+		<a href="/blog/tags/mef/" rel="3">
+			MEF
+		</a>
+
+		<a href="/blog/tags/category-theory/" rel="5">
+			category theory
+		</a>
+
+		<a href="/blog/tags/design/" rel="8">
+			design
+		</a>
+
+		<a href="/blog/tags/elastic-search/" rel="3">
+			elastic search
+		</a>
+
+		<a href="/blog/tags/expression-trees/" rel="5">
+			expression trees
+		</a>
+
+</div>
+</div>
+<script src="/js/jquery_tagcloud.js"></script>
+
+<script>
+
+    $.fn.tagcloud.defaults = {
+      size: {start: 10, end: 18, unit: 'pt'},
+      color: {start: '#66CCFF', end: '#0066FF'}
+    };
+
+    $(function () {
+      $('#cloud a').tagcloud();
+    });
+</script>
+              </div>
+            </div>
+            <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+            <div>
+<h3>Timeline</h3>
+<div id="timeline">
+	<ul class="nav nav-pills">
+		
+			<li>
+				<a href="/blog/2014/04" >
+					April 2014 (2)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2014/03" >
+					March 2014 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/11" >
+					November 2013 (1)
+				</a>
+			</li>
+		
+			<li>
+				<a href="/blog/2013/10" >
+					October 2013 (4)
+				</a>
+			</li>
+		
+	</ul>
+</div>
+</div>
+
+            </div>
+
+            </div>
+          </div>
+          
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
