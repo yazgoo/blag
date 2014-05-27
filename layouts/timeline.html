@@ -4,7 +4,7 @@
 	<ul class="nav nav-pills">
 		<% for date in get_timeline() %>
 			<li>
-				<a href="/blog/<%= date.year %>/<%= '%02d' % date.month %>" >
+				<a href="blog/<%= date.year %>/<%= '%02d' % date.month %>" >
 					<%=Date::MONTHNAMES[date.month.to_i] %> <%= date.year %> (<%=articles_with_year_and_month(date.year, date.month).length %>)
 				</a>
 			</li>

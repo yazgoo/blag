@@ -1,8 +1,8 @@
-Crashlog created at 2014-05-26 08:12:02 +0200
+Crashlog created at 2014-05-27 08:14:04 +0200
 
 ===== MESSAGE:
 
-LoadError: cannot load such file -- colorize
+ArgumentError: different prefix: "" and "/harvest-nav"
 
 ===== COMPILATION STACK:
 
@@ -10,51 +10,61 @@ LoadError: cannot load such file -- colorize
 
 ===== STACK TRACE:
 
-  0. /usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-  1. /usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
-  2. lib/helpers.rb:2:in `<main>'
-  3. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/code_snippet.rb:36:in `eval'
-  4. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/code_snippet.rb:36:in `load'
-  5. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/site.rb:316:in `block in load_code_snippets'
-  6. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/site.rb:316:in `each'
-  7. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/site.rb:316:in `load_code_snippets'
-  8. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/site.rb:241:in `load'
-  9. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:118:in `load'
-  10. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:82:in `run'
-  11. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/site.rb:58:in `compile'
-  12. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:65:in `block in recompile'
-  13. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:63:in `chdir'
-  14. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:63:in `recompile'
-  15. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:55:in `block in recompile_in_subprocess'
-  16. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:55:in `fork'
-  17. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:55:in `recompile_in_subprocess'
-  18. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:20:in `start'
-  19. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:74:in `block in run_supervised_task'
-  20. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:71:in `catch'
-  21. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:71:in `run_supervised_task'
-  22. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:22:in `block (2 levels) in run'
-  23. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:150:in `block (3 levels) in _scoped_plugins'
-  24. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:148:in `each'
-  25. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:148:in `block (2 levels) in _scoped_plugins'
-  26. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:147:in `catch'
-  27. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:147:in `block in _scoped_plugins'
-  28. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:145:in `each'
-  29. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:145:in `_scoped_plugins'
-  30. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:21:in `block in run'
-  31. /var/lib/gems/1.9.1/gems/lumberjack-1.0.5/lib/lumberjack.rb:32:in `unit_of_work'
-  32. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:20:in `run'
-  33. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/commander.rb:28:in `block in start'
-  34. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/commander.rb:108:in `block in within_preserved_state'
-  35. <internal:prelude>:10:in `synchronize'
-  36. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/commander.rb:105:in `within_preserved_state'
-  37. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/commander.rb:26:in `start'
-  38. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/cli.rb:107:in `start'
-  39. /usr/lib/ruby/vendor_ruby/thor/command.rb:27:in `run'
-  40. /usr/lib/ruby/vendor_ruby/thor/invocation.rb:121:in `invoke_command'
-  41. /usr/lib/ruby/vendor_ruby/thor.rb:363:in `dispatch'
-  42. /usr/lib/ruby/vendor_ruby/thor/base.rb:440:in `start'
-  43. /var/lib/gems/1.9.1/gems/guard-2.6.1/bin/guard:6:in `<top (required)>'
-  44. /usr/local/bin/guard:23:in `load'
+  0. /usr/lib/ruby/1.9.1/pathname.rb:465:in `relative_path_from'
+  1. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/helpers/link_to.rb:146:in `relative_path_to'
+  2. layout /tags/:5:in `block in get_binding'
+  3. layout /tags/:4:in `each'
+  4. layout /tags/:4:in `get_binding'
+  5. /usr/lib/ruby/1.9.1/erb.rb:838:in `eval'
+  6. /usr/lib/ruby/1.9.1/erb.rb:838:in `result'
+  7. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/filters/erb.rb:34:in `run'
+  8. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/filter.rb:121:in `setup_and_run'
+  9. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/helpers/rendering.rb:120:in `render'
+  10. layout /default/:37:in `get_binding'
+  11. /usr/lib/ruby/1.9.1/erb.rb:838:in `eval'
+  12. /usr/lib/ruby/1.9.1/erb.rb:838:in `result'
+  13. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/filters/erb.rb:34:in `run'
+  14. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/filter.rb:121:in `setup_and_run'
+  15. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/result_data/item_rep.rb:403:in `layout'
+  16. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/item_rep_proxy.rb:69:in `layout'
+  17. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/rule_context.rb:74:in `layout'
+  18. ./Rules:68:in `block in load'
+  19. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/rule.rb:70:in `instance_eval'
+  20. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/rule.rb:70:in `apply_to'
+  21. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:385:in `compile_rep'
+  22. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:341:in `block in compile_reps'
+  23. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:334:in `loop'
+  24. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:334:in `compile_reps'
+  25. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/compilation/compiler.rb:89:in `run'
+  26. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib/nanoc/base/source_data/site.rb:58:in `compile'
+  27. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:65:in `block in recompile'
+  28. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:63:in `chdir'
+  29. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:63:in `recompile'
+  30. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib/guard/nanoc.rb:28:in `run_on_changes'
+  31. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:74:in `block in run_supervised_task'
+  32. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:71:in `catch'
+  33. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:71:in `run_supervised_task'
+  34. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:119:in `block in _run_first_task_found'
+  35. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:117:in `each'
+  36. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:117:in `_run_first_task_found'
+  37. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:53:in `block in run_on_changes'
+  38. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:150:in `block (3 levels) in _scoped_plugins'
+  39. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:148:in `each'
+  40. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:148:in `block (2 levels) in _scoped_plugins'
+  41. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:147:in `catch'
+  42. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:147:in `block in _scoped_plugins'
+  43. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:145:in `each'
+  44. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:145:in `_scoped_plugins'
+  45. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/runner.rb:46:in `run_on_changes'
+  46. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/setuper.rb:296:in `block (2 levels) in _listener_callback'
+  47. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/commander.rb:108:in `block in within_preserved_state'
+  48. <internal:prelude>:10:in `synchronize'
+  49. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/commander.rb:105:in `within_preserved_state'
+  50. /var/lib/gems/1.9.1/gems/guard-2.6.1/lib/guard/setuper.rb:295:in `block in _listener_callback'
+  51. /var/lib/gems/1.9.1/gems/listen-2.7.5/lib/listen/listener.rb:159:in `call'
+  52. /var/lib/gems/1.9.1/gems/listen-2.7.5/lib/listen/listener.rb:159:in `block in _wait_for_changes'
+  53. /var/lib/gems/1.9.1/gems/listen-2.7.5/lib/listen/listener.rb:148:in `loop'
+  54. /var/lib/gems/1.9.1/gems/listen-2.7.5/lib/listen/listener.rb:148:in `_wait_for_changes'
 
 ===== VERSION INFORMATION:
 
@@ -72,6 +82,7 @@ Linux yazgoo-ThinkPad-X240 3.13.0-24-generic #47-Ubuntu SMP Fri May 2 23:30:00 U
   celluloid 0.15.2
   coderay 1.1.0
   colored 1.2
+  colorize 0.7.3
   cri 2.6.0
   ffi 1.9.3
   formatador 0.2.5
@@ -97,6 +108,7 @@ Linux yazgoo-ThinkPad-X240 3.13.0-24-generic #47-Ubuntu SMP Fri May 2 23:30:00 U
 
 CLUTTER_IM_MODULE => "xim"
 COLORTERM => "gnome-terminal"
+COLUMNS => "144"
 COMPIZ_CONFIG_PROFILE => "ubuntu"
 DBUS_DEBUG_OUTPUT => "1"
 DBUS_SESSION_BUS_ADDRESS => "unix:abstract=/tmp/dbus-lNNoN5wII2,guid=8df85b58ab4eb540f5209a425381ccb1"
@@ -132,6 +144,7 @@ LC_TELEPHONE => "fr_FR.UTF-8"
 LC_TIME => "fr_FR.UTF-8"
 LESSCLOSE => "/usr/bin/lesspipe %s %s"
 LESSOPEN => "| /usr/bin/lesspipe %s"
+LINES => "37"
 LOGNAME => "yazgoo"
 LS_COLORS => "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:"
 MANDATORY_PATH => "/usr/share/gconf/ubuntu.mandatory.path"
@@ -196,11 +209,13 @@ _ => "/usr/local/bin/guard"
   17. /var/lib/gems/1.9.1/gems/nanoc-3.6.11/lib
   18. /var/lib/gems/1.9.1/gems/guard-nanoc-1.0.2/lib
   19. /var/lib/gems/1.9.1/gems/stringex-2.5.2/lib
-  20. /usr/local/lib/site_ruby/1.9.1
-  21. /usr/local/lib/site_ruby/1.9.1/x86_64-linux
-  22. /usr/local/lib/site_ruby
-  23. /usr/lib/ruby/vendor_ruby/1.9.1
-  24. /usr/lib/ruby/vendor_ruby/1.9.1/x86_64-linux
-  25. /usr/lib/ruby/vendor_ruby
-  26. /usr/lib/ruby/1.9.1
-  27. /usr/lib/ruby/1.9.1/x86_64-linux
+  20. /var/lib/gems/1.9.1/gems/colorize-0.7.3/lib
+  21. /var/lib/gems/1.9.1/gems/kramdown-1.3.3/lib
+  22. /usr/local/lib/site_ruby/1.9.1
+  23. /usr/local/lib/site_ruby/1.9.1/x86_64-linux
+  24. /usr/local/lib/site_ruby
+  25. /usr/lib/ruby/vendor_ruby/1.9.1
+  26. /usr/lib/ruby/vendor_ruby/1.9.1/x86_64-linux
+  27. /usr/lib/ruby/vendor_ruby
+  28. /usr/lib/ruby/1.9.1
+  29. /usr/lib/ruby/1.9.1/x86_64-linux

@@ -19,7 +19,7 @@ module PostHelper
     content = post.compiled_content
     if content =~ /\s<!-- more -->\s/
       content = content.partition('<!-- more -->').first +
-      "<div class='read-more pull-right'><a href='#{post.path}'>Continue reading &rsaquo;</a></div>"
+      "<div class='read-more pull-right'><a href='#{relative_path_to(post)}'>Continue reading &rsaquo;</a></div>"
     end
     return content
   end
