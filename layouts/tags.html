@@ -2,7 +2,7 @@
 <h3>Tags</h3>
 <div id="cloud">
 <% for item in all_tags() %>
-		<a href="blog/tags/<%= item.to_url %>/" rel="<%= tag_weight(item) %>">
+		<a href="blog/tags/<%= item.to_url %>/index.html" rel="<%= tag_weight(item) %>">
 			<%= item %>
 		</a>
 <% end %>

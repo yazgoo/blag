@@ -15,11 +15,15 @@ module PostHelper
     get_post_date(post).strftime('%B %-d, %Y')
   end
 
+  def relative_path_to_index what
+      relative_path_to(what) + "index.html"
+  end
+
   def get_post_start(post)
     content = post.compiled_content
     if content =~ /\s<!-- more -->\s/
       content = content.partition('<!-- more -->').first +
-      "<div class='read-more pull-right'><a href='#{relative_path_to(post)}'>Continue reading &rsaquo;</a></div>"
+      "<div class='read-more pull-right'><a href='#{relative_path_to_index(post)}'>Continue reading &rsaquo;</a></div>"
     end
     return content
   end
