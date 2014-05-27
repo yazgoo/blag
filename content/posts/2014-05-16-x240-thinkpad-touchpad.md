@@ -17,7 +17,7 @@ Here is what I did to fix it, based on [this article](
 
 The touchpad is in only one part (it's also called a clickpad):
 
-![clickpad image](/images/clickpad.png "clickpad")
+![clickpad image](../../../images/clickpad.png "clickpad")
 
 On ubuntu, by default, there are problems with it:
 
@@ -95,7 +95,7 @@ Also, the manual states that:
 So the middle button is disabled.
 So here is the right click zone (clicking anywhere else is considered as a left click):
 
-<div style="width:520px; height:370px; background-image:url('/images/clickpad.png')">
+<div style="width:520px; height:370px; background-image:url('../../../images/clickpad.png')">
 <div style="position:relative; left: 50%; top: 82%; width: 42%; height:16.65%; background-color: green; border-bottom-right-radius: 10px; opacity: 0.8;">
 </div>
 </div>
@@ -108,7 +108,7 @@ If we want the middle button to start at 35% of the left and end at 10% of the t
 
 The resulting zones are (blue is middle click, green is right click):
 
-<div style="width:520px; height:370px; background-image:url('/images/clickpad.png')">
+<div style="width:520px; height:370px; background-image:url('../../../images/clickpad.png')">
 <div style="position: relative; float: left; left: 38%; top: 6%; width: 27%; height:10%; background-color: blue; opacity: 0.8;">
 </div>
 <div style="position: relative; left: 65%; top: 6%; width: 26%; height:10%; background-color: green; opacity: 0.8;">
