@@ -72,7 +72,7 @@ So this is article is a little like a step by step guide.</p>
 
 <p>This creates an empty gem project.
 This dummy gem will take a number and multiply it by 2.
-You may want to edit the x2.gemspec file next:</p>
+You may want to edit the x2.gemspec file next by updating those two lines:</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.description = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">multiply by 2</span><span style="color:#710">&quot;</span></span>
@@ -136,14 +136,6 @@ Lets test it:</p>
 <pre><code>$ git add .
 </code></pre>
 
-<p>And declare the executable in x2.gemspec, by adding:</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.executable &lt;&lt; <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">x2</span><span style="color:#710">&quot;</span></span>
-</pre></div>
-</div>
-</div>
-
 <h2 id="warbler">warbler</h2>
 
 <p>Meet <a href="//github.com/jruby/warbler">warbler</a>.</p>
@@ -157,7 +149,9 @@ Rails or Rack application</p>
 
 <p>Lets see how hard it is to get an “executable” jar from all this:</p>
 
-<pre><code>$ warble jar
+<pre><code>$ warble
+rm -f x2.jar
+Creating x2.jar
 </code></pre>
 
 <p>And it’s done. Now run it:</p>
@@ -179,8 +173,11 @@ First, we need a web application engine, we’ll use
 
 <p>Let’s add it as a runtime dependency to the x2.gemspec:</p>
 
-<pre><code>spec.add_runtime_dependency "sinatra"
-</code></pre>
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.add_runtime_dependency <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">sinatra</span><span style="color:#710">&quot;</span></span>
+</pre></div>
+</div>
+</div>
 
 <p>Let’s write the webapp main rackup code in config.ru:</p>
 
@@ -229,8 +226,13 @@ First download <a href="//tomee.apache.org/downloads.html">tommee plus</a>.</p>
 
 <p>Now in our x2 project, let’s build the war using warble:</p>
 
-<pre><code>$ warble war
+<pre><code>$ warble
+rm -f x2.war
+Creating x2.war
 </code></pre>
+
+<p>And yes, because you have a config.ru file,
+warbler assumes you want a war!</p>
 
 <p>Now, let’s copy x2.war to your TomEE:</p>
 
