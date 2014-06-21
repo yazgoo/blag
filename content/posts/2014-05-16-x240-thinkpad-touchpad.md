@@ -1,6 +1,6 @@
 ---
 title: "X240 Thinkpad touchpad"
-created_at: 2015-05-26 21:22:18 +0100
+created_at: 2014-05-26 21:22:18 +0100
 kind: article
 published: false
 tags: ['thinkpad', 'x240', 'touchpad']
