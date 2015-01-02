@@ -24,7 +24,7 @@ information is encoded into one's genome.
 
 We get this screenshot:
 
-![genome screenshot](images/screenshot_genome.png "genome screenshot")
+![genome screenshot](../../../images/screenshot_genome.png "genome screenshot")
 
 Delphine also states that she knows Cosima's tag #, which is:
 
