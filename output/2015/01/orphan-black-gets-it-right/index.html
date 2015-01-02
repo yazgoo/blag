@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>It must be bunnies - impress arrows and impress circle</title>
+    <title>It must be bunnies - Orphan black gets it right</title>
     <link href="http://fonts.googleapis.com/css?family=Ubuntu|Lato|Muli" rel="stylesheet" type="text/css" />
     <link href='http://fonts.googleapis.com/css?family=Josefin+Slab:700' rel='stylesheet' type='text/css'>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -30,80 +30,92 @@
         <div class="row">
         <div class="col-md-8">
             
-		<h1>impress arrows and impress circle</h1>
-		<aside>Posted at: June 4, 2014</aside>
+		<h1>Orphan black gets it right</h1>
+		<aside>Posted at: January 2, 2015</aside>
 		<article>
-			<p>I’d like to introduce you to the stuff I’ve been working on for
-the last few weeks or so which are helper libraries on top of
-the awesome impress.js.</p>
+			<p>I’ve been re-watching the awesome Orphan Black first series.
+If you’ve not watched it yet, this post might contain spoilers.</p>
+
+<p>I’m not going to talk about Tatiana Maslany acting nor about
+special effects when twins are involved which are both great.</p>
+
+<p>What I’m gonna talk about is the geeky stuff happening on the last
+episode of the first season.</p>
 
 <!-- more -->
 
-<h4 id="impressjs">impress.js</h4>
+<h2 id="information-we-get">Information we get</h2>
 
-<p>If you don’t know about impress.js, <a href="http://bartaz.github.io/impress.js">go check it out know</a>.</p>
+<p>Here is the plot: two characters are trying to figure out how 
+information is encoded into one’s genome.</p>
 
-<p>Writing nice presentations with HTML is just really great.
-I needed some more stuff so I figured I would share it.</p>
+<p>We get this screenshot:</p>
 
-<h4 id="impressarrows">impress_arrows</h4>
+<p><img src="images/screenshot_genome.png" alt="genome screenshot" title="genome screenshot" /></p>
 
-<p>I first needed to add arrows to my presentation.
-I then thought I could use it to draw basic graphs.
-For example:</p>
+<p>Delphine also states that she knows Cosima’s tag #, which is:</p>
 
-<img src=arrow://http://cdn.rawgit.com/yazgoo/impress_arrow/master/minimal.html#/done width=500 height=200
-title=minimal />
-
-<p><a href="https://github.com/yazgoo/impress_arrows">Here</a> is the project repository.</p>
-
-<h4 id="arrow-images">arrow images</h4>
-
-<p>I wanted to be able to include presentation in other HTML documents.
-Here is how impress arrow allows you to do so (this includes previous graph):</p>
-
-<pre><code>&lt;img src=arrow://http://cdn.rawgit.com/yazgoo/impress_arrow/master/minimal.html#/done width=500 height=200 title=minimal /&gt;
+<pre><code>324b21 
 </code></pre>
 
-<p>You can use eithere relative or absolute URLs.
-Then, issuing a load_images will include those document in your page:</p>
+<p>I’m gonna assume that what we see here actually means something
+(remember, we’re watching TV).</p>
 
-<pre><code>&lt;script type=text/javascript src=https://cdn.rawgit.com/yazgoo/impress_arrows/master/impress_arrows_all.js&gt;
-&lt;/script&gt;
-&lt;script&gt;
-impress_arrows().load_images();
-&lt;/script&gt;
+<h2 id="decoding">Decoding</h2>
+
+<p>Ok, so let’s try and decode the part that’s highligted!</p>
+
+<p>Here it is:</p>
+
+<pre><code>GCTTGCTTCGAAGGTCGCAAGTGCGAAGCGTGCGTTGGAGCGATGCGA
 </code></pre>
 
-<h4 id="impresscircle">impress_circle</h4>
+<p>This part is 48 nucleotides long.
+One thing you can notice here is that 48 is a multiple of 8 (6 times 8).</p>
 
-<p>I also wanted to have a presentation layout with a rotating menu.
-That’s why I created <a href="https://github.com/yazgoo/impress_circle">impress circle</a>
-(focus on the document below and press space or arrows as you would on a standalone page).</p>
+<p>Oh! 324b21, also is 6 characters long!</p>
 
-<img src=arrow://http://cdn.rawgit.com/yazgoo/impress_circle/master/index.html width=740 height=400
-title="impress circle example" />
-<script type=text/javascript src=https://cdn.rawgit.com/yazgoo/impress_arrows/master/impress_arrows_all.js>
-</script>
-<script>
-impress_arrows().load_images();
-</script>
+<p>Let’s assume the second 8 bytes encode the character ‘2’ in ASCII,
+which is 50 in ASCII, 00110010 in binary.
+Following this assumption, CGAAGGTC is equivalent to 00110010.
+So G and C would be zeroes, and A and T would be ones.</p>
 
-<p>What I find nice with impress_circle is that, as for impress.js, this is only HTML.
-For example here is part of the previous document source:</p>
+<h2 id="wrapping-it-up">Wrapping it up</h2>
 
-<pre><code>&lt;div class="circle"&gt;
-    &lt;div data-name="create document"&gt;
-        &lt;div data-name="stylesheet"&gt;
-            load the stylesheet
-        &lt;/div&gt;
-        &lt;div data-name="create impress div"&gt;
-            you can add as many normal impress steps as you like
-        &lt;/div&gt;
-    &lt;/div&gt; 
+<p>Now, we can write a script that tries and decodes clone DNA:</p>
+
+<pre><code>#!/usr/bin/env ruby
+puts ARGV[0].gsub(/[AT]/, "1").gsub(/[^1]/, "0").scan(/......../).collect { |x| (x.to_i(2)).chr }.join
 </code></pre>
 
-<p>I hope all these can help you in some way.</p>
+<p>This:</p>
+
+<ol>
+  <li>substitutes As and Ts with 1s</li>
+  <li>substitutes all other letters with 0s</li>
+  <li>split the string in strings of eight bits</li>
+  <li>convert each 8bit part to an integer from base 2</li>
+  <li>convert each integer to a character</li>
+  <li>joins all characters</li>
+</ol>
+
+<p>Lets try it on our sequence:</p>
+
+<pre><code>$ ./decode.rb GCTTGCTTCGAAGGTCGCAAGTGCGAAGCGTGCGTTGGAGCGATGCGA
+324b21
+</code></pre>
+
+<p>Cosima’s tag!</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Our assumption on the second character encoding ‘2’ in ASCII is validated.
+The other assumption that it all made sense, which was far more risky is
+validated too!</p>
+
+<p>This kind of detail on TV is just great.
+It just make the series far more realistic 
+(though I have no idea on how realistic the biology part is)!</p>
 
 		</article>
 <div id="disqus_thread"></div>
