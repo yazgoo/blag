@@ -36,7 +36,9 @@
 			<p>Some days ago I read the following tweet:</p>
 
 <div>
-<blockquote class="twitter-tweet" lang="en"><p>Today is one of those days I question my time spent working on JRuby, when so many Rubyists still treat us like the great Satan.</p>&mdash; Charles Nutter (@headius) <a href="https://twitter.com/headius/statuses/478133674710679552">June 15, 2014</a></blockquote>
+<blockquote class="twitter-tweet" lang="en">
+<p>Today is one of those days I question my time spent working on JRuby, when so many Rubyists still treat us like the great Satan.</p>— Charles Nutter (@headius) <a href="https://twitter.com/headius/statuses/478133674710679552">June 15, 2014</a>
+</blockquote>
 </div>
 
 <p>It made me a little sad to see headius feel this way…
@@ -74,9 +76,10 @@ So this is article is a little like a step by step guide.</p>
 This dummy gem will take a number and multiply it by 2.
 You may want to edit the x2.gemspec file next by updating those two lines:</p>
 
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.description = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">multiply by 2</span><span style="color:#710">&quot;</span></span>
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>spec.summary     = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#710">&quot;</span></span>
+<div>
+<div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.description = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">"</span><span style="color:#D20">multiply by 2</span><span style="color:#710">"</span></span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>spec.summary     = <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">"</span><span style="color:#710">"</span></span>
 </pre></div>
 </div>
 </div>
@@ -84,8 +87,9 @@ You may want to edit the x2.gemspec file next by updating those two lines:</p>
 <p>Now, lets write our main code in lib/x2.rb.
 When done, the file should contain:</p>
 
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>require <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">x2/version</span><span style="color:#710">&quot;</span></span>
+<div>
+<div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>require <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">"</span><span style="color:#D20">x2/version</span><span style="color:#710">"</span></span>
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span style="color:#080;font-weight:bold">module</span> <span style="color:#B06;font-weight:bold">X2</span>
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    <span style="color:#080;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">X2</span>
@@ -115,7 +119,8 @@ $ chmod +x bin/x2
 
 <p>Let’s edit bin/x2</p>
 
-<div><div class="CodeRay">
+<div>
+<div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span style="color:#34b">#!/usr/bin/env ruby</span>
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>require <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">x2</span><span style="color:#710">'</span></span>
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>puts <span style="color:#036;font-weight:bold">X2</span>::<span style="color:#036;font-weight:bold">X2</span>.new(<span style="color:#069">ARGV</span>[<span style="color:#00D">0</span>]).to_i
@@ -173,15 +178,17 @@ First, we need a web application engine, we’ll use
 
 <p>Let’s add it as a runtime dependency to the x2.gemspec:</p>
 
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.add_runtime_dependency <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">sinatra</span><span style="color:#710">&quot;</span></span>
+<div>
+<div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>spec.add_runtime_dependency <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">"</span><span style="color:#D20">sinatra</span><span style="color:#710">"</span></span>
 </pre></div>
 </div>
 </div>
 
 <p>Let’s write the webapp main rackup code in config.ru:</p>
 
-<div><div class="CodeRay">
+<div>
+<div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>require <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">bundler</span><span style="color:#710">'</span></span>
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span><span style="color:#036;font-weight:bold">Bundler</span>.require
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>require <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">sinatra</span><span style="color:#710">'</span></span>
@@ -259,7 +266,9 @@ warbler assumes you want a war!</p>
 <p>Hence:</p>
 
 <div>
-<blockquote class="twitter-tweet" lang="en"><p><a href="https://twitter.com/headius">@headius</a> Don&#39;t. Your work is very usefull to me on a daily basis!</p>&mdash; yazgoo (@oogzay) <a href="https://twitter.com/oogzay/statuses/478140729974611969">June 15, 2014</a></blockquote>
+<blockquote class="twitter-tweet" lang="en">
+<p><a href="https://twitter.com/headius">@headius</a> Don't. Your work is very usefull to me on a daily basis!</p>— yazgoo (@oogzay) <a href="https://twitter.com/oogzay/statuses/478140729974611969">June 15, 2014</a>
+</blockquote>
 </div>
 
 <h2 id="references">references</h2>
@@ -331,7 +340,7 @@ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
 		
 			<li>
 				<a href="blog/2015/01/index.html" >
-					January 2015 (1)
+					January 2015 (2)
 				</a>
 			</li>
 		
