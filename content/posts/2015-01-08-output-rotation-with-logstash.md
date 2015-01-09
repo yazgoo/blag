@@ -7,6 +7,7 @@ published: false
 I love [logstash](http://logstash.net/), it is a really powerfull tool,
 and it also leverages jruby so it is really self-contained and portable.
 
+
 Let's say you want to use `n` different outputs based on current date.
 Here is the solution I use.
 
