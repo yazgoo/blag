@@ -3,7 +3,7 @@ title: "impress arrows and impress circle"
 created_at: 2014-06-04 23:27:22 +0200
 kind: article
 published: false
-tags: ['javascript', 'impress', 'impress.js']
+tags: ['javascript', 'impress.js']
 ---
 
 I'd like to introduce you to the stuff I've been working on for

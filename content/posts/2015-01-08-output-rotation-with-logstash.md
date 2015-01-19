@@ -3,6 +3,7 @@ title: "Output rotation with logstash"
 created_at: 2015-01-08 11:58:49 +0100
 kind: article
 published: false
+tags: ['logstash']
 ---
 I love [logstash](http://logstash.net/), it is a really powerfull tool,
 and it also leverages jruby so it is really self-contained and portable.

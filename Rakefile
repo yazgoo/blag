@@ -27,3 +27,22 @@ task :new_post, :title do |t, args|
     post.puts "---\n\n"
   end
 end
+desc "Create a new tag"
+task :new_tag, :title, :description do |t, args|
+  mkdir_p './content/tags'
+  args.with_defaults(:title => 'New Post', :description => '')
+  title = args.title
+  filename = "./content/tags/#{title}.md"
+
+  if File.exist?(filename)
+    abort("#{filename} exists")
+  end
+
+  puts "Creating new tag: #{filename}"
+  open(filename, 'w') do |post|
+    post.puts '---'
+    post.puts "tag: \"#{title}\""
+    post.puts "title: \"#{title}\""
+    post.puts "---\n\n#{args.description}\n"
+  end
+end
