@@ -68,6 +68,10 @@ completion:
 
 opening vim session from within terminal:
 
+  Let's change our vmux command to:
+
+  alias vmux="rm -f /tmp/vim-server;abduco -e '^g' -A nvim-session nvim --cmd \"let g:server_addr = serverstart('/tmp/vim-server')\""
+
   let's create '$HOME/.config/nvim/send_command_to_vim_session.py :vsplit"
 
   #!/usr/bin/env python3
@@ -76,11 +80,8 @@ opening vim session from within terminal:
   nvim = neovim.attach('socket', path='/tmp/vim-server')
   nvim.command(" ".join(sys.argv[1:]))
 
-  alias vsplit="$HOME/.config/nvim/send_command_to_vim_session.py :vsplit"
-  alias split="$HOME/.config/nvim/send_command_to_vim_session.py :split"
-
-  Let's change our vmux command to:
-
-  alias vmux="abduco -e '^g' -A nvim-session nvim --cmd \"let g:server_addr = serverstart('/tmp/vim-server')\""
+  alias vmux-send="$HOME/.config/nvim/send_command_to_vim_session.py"
+  alias vsplit="vmux-send :vsplit"
+  alias split="vmux-send :split"
 
   Now in a :terminal, we will be able to call split or vsplit command !
