@@ -66,11 +66,27 @@ completion:
 
   ^n completion will pick up everything managed by vim, including stuff written in your terminal !
 
-opening vim session from within terminal:
+controlling vim session from within terminal:
 
+  One usual workflow I have is:
+
+  1. open a terminal
+  2. find files in a directory
+  3. open a file in the directory
+
+  With tmux, I just had to do
+
+  `vim myfile`
+
+  At first, I just copied the name of a file in a buffer, then open it in my vim session.
+  But I find it complicated.
+  What I'd like to do is, from within my terminal, call
+  - vsplit myfile
+  - split myfile
+  - e myfile
   Let's change our vmux command to:
 
-  alias vmux="rm -f /tmp/vim-server;abduco -e '^g' -A nvim-session nvim --cmd \"let g:server_addr = serverstart('/tmp/vim-server')\""
+  alias vmux="(abduco -l|grep nvim-session) || rm -f /tmp/vim-server;abduco -e '^g' -A nvim-session nvim --cmd \"let g:server_addr = serverstart('/tmp/vim-server')\""
 
   let's create '$HOME/.config/nvim/send_command_to_vim_session.py :vsplit"
 
@@ -83,5 +99,6 @@ opening vim session from within terminal:
   alias vmux-send="$HOME/.config/nvim/send_command_to_vim_session.py"
   alias vsplit="vmux-send :vsplit"
   alias split="vmux-send :split"
+  alias e="vmux-send :e"
 
   Now in a :terminal, we will be able to call split or vsplit command !
