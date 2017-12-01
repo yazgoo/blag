@@ -97,8 +97,9 @@ controlling vim session from within terminal:
   nvim.command(" ".join(sys.argv[1:]))
 
   alias vmux-send="$HOME/.config/nvim/send_command_to_vim_session.py"
-  alias vsplit="vmux-send :vsplit"
-  alias split="vmux-send :split"
-  alias e="vmux-send :e"
+  for cmd in split vsplit e tabnew
+  do
+    alias $cmd="vmux-send :$cmd"
+  done
 
   Now in a :terminal, we will be able to call split or vsplit command !
