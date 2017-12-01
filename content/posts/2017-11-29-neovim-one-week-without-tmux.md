@@ -54,6 +54,33 @@ detaching:
   tmux is a terminal multiplexer, but it also supports detaching/attaching
   this is really a usefull feature I'm not ready to lose yet.
   For example, it allows me to upgrade my terminal emulator without loosing my session.
-  Lets use abduco (a detach clone) for that:
+
+  As mentioned here https://github.com/neovim/neovim/issues/5035#issuecomment-288144900 ,
+  lets use abduco (a detach clone) for that:
 
     alias vmux="abduco -e '^q' -A nvim-session nvim"
+
+  Just use CTRL+q to detach from the session
+
+completion:
+
+  ^n completion will pick up everything managed by vim, including stuff written in your terminal !
+
+opening vim session from within terminal:
+
+  let's create '$HOME/.config/nvim/send_command_to_vim_session.py :vsplit"
+
+  #!/usr/bin/env python3
+  import neovim
+  import sys
+  nvim = neovim.attach('socket', path='/tmp/vim-server')
+  nvim.command(" ".join(sys.argv[1:]))
+
+  alias vsplit="$HOME/.config/nvim/send_command_to_vim_session.py :vsplit"
+  alias split="$HOME/.config/nvim/send_command_to_vim_session.py :split"
+
+  Let's change our vmux command to:
+
+  alias vmux="abduco -e '^g' -A nvim-session nvim --cmd \"let g:server_addr = serverstart('/tmp/vim-server')\""
+
+  Now in a :terminal, we will be able to call split or vsplit command !
