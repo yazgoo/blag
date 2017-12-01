@@ -26,13 +26,13 @@ preprocess do
     #           :menu_title => date.year, :year => date.year, 
     #           :layout => "timeline", 
     #           :extension => "html"}, "/blog/#{date.year}/")
-    @items << Nanoc::Item.new("", {
+    @items.create("", {
               :title => "Blog posts from #{Date::MONTHNAMES[date.month.to_i]} #{date.year}", 
               :menu_title => Date::MONTHNAMES[date.month.to_i], 
               :year => date.year, 
               :month => date.month, 
               :layout => "timeline", 
-              :extension => "html"}, "/blog/#{date.year}/#{'%02d' % date.month}/")
+              :extension => "html"}, "/blog/#{date.year}/#{'%02d' % date.month}")
   end
 
 end
