@@ -52,8 +52,8 @@ nesting:
 detaching:
 
   tmux is a terminal multiplexer, but it also supports detaching/attaching
-  this is really a usefull feature I'm not ready to lose yet.
-  For example, it allows me to upgrade my terminal emulator without loosing my session.
+  this is really a useful feature I'm not ready to lose yet.
+  For example, it allows me to upgrade my terminal emulator without losing my session.
 
   As mentioned here https://github.com/neovim/neovim/issues/5035#issuecomment-288144900 ,
   lets use abduco (a detach clone) for that:
